@@ -5,19 +5,21 @@ from langchain.embeddings import OpenAIEmbeddings
 import pickle
 
 # Load Data
-loader = ReadTheDocsLoader("langchain.readthedocs.io")
-raw_documents = loader.load()
 
-# Split text
-text_splitter = RecursiveCharacterTextSplitter()
-documents = text_splitter.split_documents(raw_documents)
+def scrapeAndSave(url="langchain.readthedocs.io", out_path="vectorstore.pkl"):
+    loader = ReadTheDocsLoader(url)
+    raw_documents = loader.load()
 
-
-# Load Data to vectorstore
-embeddings = OpenAIEmbeddings()
-vectorstore = FAISS.from_documents(documents, embeddings)
+    # Split text
+    text_splitter = RecursiveCharacterTextSplitter()
+    documents = text_splitter.split_documents(raw_documents)
 
 
-# Save vectorstore
-with open("vectorstore.pkl", "wb") as f:
-    pickle.dump(vectorstore, f)
+    # Load Data to vectorstore
+    embeddings = OpenAIEmbeddings()
+    vectorstore = FAISS.from_documents(documents, embeddings)
+
+
+    # Save vectorstore
+    with open(out_path, "wb") as f:
+        pickle.dump(vectorstore, f)
